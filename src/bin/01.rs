@@ -81,7 +81,11 @@ fn main() -> Result<()> {
     println!("\n=== Part 2 ===");
 
     fn part2<R: BufRead>(reader: R) -> Result<usize> {
-        let (mut col1, col2) = split_lists(reader)?;
+        let (mut col1, mut col2) = split_lists(reader)?;
+
+        // sort each vector
+        col1.sort();
+        col2.sort();
 
         // step 1: get unique elements of col1 and
         //         the number of their occurences from col1
