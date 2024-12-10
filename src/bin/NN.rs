@@ -24,6 +24,7 @@ fn main() -> Result<()> {
         Ok(answer)
     }
 
+    // TEST result 1
     // TODO: Set the expected answer for the test input
     assert_eq!(0, part1(BufReader::new(TEST.as_bytes()))?);
 
@@ -39,6 +40,7 @@ fn main() -> Result<()> {
     //     Ok(0)
     // }
     //
+    //// TEST result 2
     // assert_eq!(0, part2(BufReader::new(TEST.as_bytes()))?);
     //
     // let input_file = BufReader::new(File::open(INPUT_FILE)?);
