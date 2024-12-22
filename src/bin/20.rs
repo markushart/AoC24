@@ -278,33 +278,45 @@ fn get_cheats(
     // println!("{:?}", test_map);
 
     // print result
-    cheats
-        .iter()
-        // .sorted_by_key(|c| c.from)
-        .for_each(|c| {
-            let mut saved_dist = c.to as isize - c.from as isize;
-            if saved_dist < 0 {
-                saved_dist = (saved_dist as usize + CHEAT_DIST) as isize;
-            } else {
-                saved_dist = (saved_dist as usize - CHEAT_DIST) as isize;
-            }
-            println!(
-                "({:?}, {:?}, '{}', '{}', ia: {} ib: {}, dist: {}) ",
-                path[c.from],
-                path[c.to],
-                map[path[c.from].x][path[c.from].y],
-                map[path[c.to].x][path[c.to].y],
-                c.from,
-                c.to,
-                saved_dist
-            );
-        });
+    // cheats
+    //     .iter()
+    //     // .sorted_by_key(|c| c.from)
+    //     .for_each(|c| {
+    //         let mut saved_dist = c.to as isize - c.from as isize;
+    //         if saved_dist < 0 {
+    //             saved_dist = (saved_dist as usize + CHEAT_DIST) as isize;
+    //         } else {
+    //             saved_dist = (saved_dist as usize - CHEAT_DIST) as isize;
+    //         }
+    //         println!(
+    //             "({:?}, {:?}, '{}', '{}', ia: {} ib: {}, dist: {}) ",
+    //             path[c.from],
+    //             path[c.to],
+    //             map[path[c.from].x][path[c.from].y],
+    //             map[path[c.to].x][path[c.to].y],
+    //             c.from,
+    //             c.to,
+    //             saved_dist
+    //         );
+    //     });
 
     Result::Ok(cheats)
 }
 
 fn manhattan_dist(a: &Coord, b: &Coord) -> isize {
-    (b.x as isize - a.x as isize) + (b.y as isize - a.y as isize)
+    let mut mdx = 0;
+    let mut mdy = 0;
+    if a.x < b.x {
+        mdx = b.x as isize - a.x as isize;
+    } else {
+        mdy = a.x as isize - b.x as isize;
+    }
+    if a.y < b.y {
+        mdy = b.y as isize - a.y as isize;
+    } else {
+        mdy = a.y as isize - b.y as isize;
+    }
+    return mdx + mdy;
 }
 
 fn coord_argsort(v: &Vec<Coord>, axis: &usize) -> Vec<usize> {
@@ -336,20 +348,19 @@ fn get_cheats_rad(
     // get index sorted in x and y direction
     // let xidx = coord_argsort(path, &0);
     // let yidx = coord_argsort(path, &1);
-
     for (fi, from) in path.iter().enumerate() {
         // possible cheats must be within a window of +-r
         // around the current coordinate
         path.iter()
-            .filter(|to| {
-                let dx = to.x as isize - from.x as isize;
-                (dx * dx) as usize <= r2
-            })
-            .filter(|to| {
-                let dy = to.y as isize - from.y as isize;
-                (dy * dy) as usize <= r2
-            })
             .enumerate()
+            // .filter(|(it, to)| {
+            //     let dx = to.x as isize - from.x as isize;
+            //     (dx * dx) as usize <= r2
+            // })
+            // .filter(|(it, to)| {
+            //     let dy = to.y as isize - from.y as isize;
+            //     (dy * dy) as usize <= r2
+            // })
             .for_each(|(ti, to)| {
                 // manhattan distance
                 let md = manhattan_dist(from, to);
@@ -368,11 +379,24 @@ fn get_cheats_rad(
 
                     // check path direction and minimum saved distance
                     if fi < ti && sd2 >= mins2 {
+                        print!("{}, ", saved_dist);
                         cheats.push(Cheat { from: fi, to: ti });
                     }
                 }
             });
     }
+
+    cheats.iter().sorted_by_key(|c| c.from).for_each(|c| {
+        // println!(
+        //     "({:?}, {:?}, '{}', '{}', ia: {} ib: {}, dist: ) ",
+        //     path[c.from],
+        //     path[c.to],
+        //     map[path[c.from].x][path[c.from].y],
+        //     map[path[c.to].x][path[c.to].y],
+        //     c.from,
+        //     c.to,
+        // );
+    });
 
     Ok(cheats)
 }
@@ -460,15 +484,15 @@ fn main() -> Result<()> {
     }
 
     // TEST reesult 2
-    let e2: usize = EXPTECTED2.into_iter().map(|(n, k)| n).sum();
+    let e2: usize = EXPTECTED2.into_iter().map(|(k, n)| n).sum();
     assert_eq!(
         e2,
-        part2(BufReader::new(TEST.as_bytes()), Some(20), Some(0))?
+        part2(BufReader::new(TEST.as_bytes()), Some(20), Some(50))?
     );
-    //
-    // let input_file = BufReader::new(File::open(INPUT_FILE)?);
-    // let result = time_snippet!(part2(input_file)?);
-    // println!("Result = {}", result);
+    
+    let input_file = BufReader::new(File::open(INPUT_FILE)?);
+    let result = time_snippet!(part2(input_file, Some(20), Some(100))?);
+    println!("Result = {}", result);
     //endregion
 
     Ok(())
