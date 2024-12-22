@@ -52,9 +52,9 @@ fn is_safe_damped(telegram: &Vec<isize>) -> Result<bool> {
     print!("{:?} - {:?}", telegram, diffs);
 
     // check if all positive
-    let ascending = diffs.iter().all(|&d| d > 0);
+    // let ascending = diffs.iter().all(|&d| d > 0);
     // check if all negative
-    let descending = diffs.iter().all(|&d| d < 0);
+    // let descending = diffs.iter().all(|&d| d < 0);
 
     Ok(false)
 }
